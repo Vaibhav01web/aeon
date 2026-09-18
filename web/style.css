@@ -171,7 +171,9 @@ summary { cursor: pointer; font-size: 13px; font-weight: 650; }
   #zone-card { scroll-margin-top: 150px; }
   #top-list button { padding: 9px 4px; }
 
-  #map-controls { top: 8px; right: 8px; width: auto; padding: 4px; border-radius: 10px; }
-  #map-controls .opacity { display: none; }
+  #map-controls { top: 8px; right: 8px; width: 232px; padding: 4px; border-radius: 10px; }
+  #map-controls .opacity { margin: 4px 6px 2px; font-size: 11px; }
+  /* taller hit area so the thumb is easy to grab */
+  #map-controls .opacity input { height: 28px; margin: 0; }
   .seg.small button { padding: 6px 9px; font-size: 12px; }
 }
