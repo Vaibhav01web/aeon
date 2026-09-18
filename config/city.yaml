@@ -1,0 +1,53 @@
+# Template — copy an entry from config/cities/*.yaml or edit this file
+# directly. This is the ONLY file that should need to change to point the
+# pipeline at a new city; no city name, bbox, CRS or coefficient may appear
+# anywhere under src/. In practice `Makefile` selects a preset via
+# `config/cities/$(CITY).yaml` (env var URMS_CITY) — keep this file in sync
+# with whichever preset is currently active for local/ad-hoc runs.
+
+city:
+  name: "Pune"
+  slug: "pune"
+  state: "Maharashtra"
+  state_code: "MH"
+  ulb_name: "Pune Municipal Corporation"
+  lgd_code: null                  # optional, from D20 (data.gov.in LGD)
+  # lon_min, lat_min, lon_max, lat_max  (WGS84)
+  bbox: [73.70, 18.40, 74.05, 18.68]
+  utm_crs: "EPSG:32643"           # 43N. Use 32642 west of 72E, 32644 east of 78E
+  timezone: "Asia/Kolkata"
+  population_total: 3124458       # Census 2011 ULB total — the IPF anchor
+  population_year: 2011
+  population_growth_rate: 0.021   # CAGR; source it or mark ASSUMED
+  area_km2: 331.26
+  ward_population_csv: null       # optional: ward_id,population from Census 2011 / SHRUG
+
+zones:
+  h3_res_model: 8                 # 0.74 km²  — forecasting unit
+  h3_res_display: 9               # 0.105 km² — map rendering
+  use_wards: true                 # OSM admin_level=10
+  min_footprints_per_zone: 5      # below this, zone is flagged low-confidence
+  min_building_area_m2: 12        # drop sheds / low-confidence detections below this footprint
+
+sentinel:
+  date_start: "2026-01-01"
+  date_end: "2026-03-31"
+  baseline_start: "2019-01-01"    # for change detection
+  baseline_end: "2019-03-31"
+  max_cloud_cover: 20
+  bands: ["red", "green", "blue", "nir", "swir16", "scl"]
+  resolution: 10                  # metres — only valid because utm_crs is projected
+
+resources: ["water", "electricity", "waste"]
+
+forecast:
+  horizon_hours: 72
+  quantiles: [0.1, 0.5, 0.9]
+  temporal_model: "MSTL"          # MSTL | AutoETS | AutoARIMA | SeasonalNaive
+  seasonality: [24, 168]          # daily, weekly
+
+paths:
+  raw: "data/raw"
+  interim: "data/interim"
+  processed: "data/processed"
+  build: "build"

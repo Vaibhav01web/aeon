@@ -1,0 +1,55 @@
+{
+ "city": {
+  "name": "Pune",
+  "slug": "pune",
+  "state": "Maharashtra",
+  "state_code": "MH",
+  "ulb_name": "Pune Municipal Corporation",
+  "lgd_code": null,
+  "bbox": [
+   73.7,
+   18.4,
+   74.05,
+   18.68
+  ],
+  "utm_crs": "EPSG:32643",
+  "timezone": "Asia/Kolkata",
+  "population_total": 3124458.0,
+  "population_year": 2011,
+  "population_growth_rate": 0.021,
+  "area_km2": 331.26,
+  "ward_population_csv": null
+ },
+ "resources": [
+  "water",
+  "electricity",
+  "waste"
+ ],
+ "units": {
+  "water": "MLD",
+  "electricity": "MW",
+  "waste": "TPD"
+ },
+ "unit_scale": {
+  "water": 1e-06,
+  "electricity": 0.001,
+  "waste": 0.001
+ },
+ "demand_basis": {
+  "water": "litres/day",
+  "electricity": "peak-hour kWh/h",
+  "waste": "kg/day"
+ },
+ "population_method": "building footprints (VIDA) x residential share",
+ "population_target": 4267375.135619066,
+ "climate_tco2e_per_year": {
+  "Fix leaks (NRW 35%\u219220%)": 20103.772885398495,
+  "Compost 80% wet waste": 202162.9710648285
+ },
+ "climate_sources": [
+  "CEA CO2 Baseline Database for the Indian Power Sector",
+  "IPCC 2006 GL Vol.5 default DOC/MCF for managed anaerobic landfill"
+ ],
+ "attribution": "Building footprints \u00a9 Google (Open Buildings v3), \u00a9 Microsoft (GlobalMLBuildingFootprints), \u00a9 OpenStreetMap contributors \u2014 merged by VIDA, ODbL 1.0 \u00b7 Contains modified Copernicus Sentinel data (2026) \u00b7 GHSL \u00a9 European Union 1995-2026, CC BY 4.0; WorldPop, CC BY 4.0 \u00b7 Map data \u00a9 OpenStreetMap contributors, ODbL \u00b7 Basemap \u00a9 OpenFreeMap, \u00a9 OpenMapTiles \u00b7 Weather \u00a9 Open-Meteo, CC BY 4.0 \u00b7 Routing \u00a9 Project-OSRM, BSD-2",
+ "notice": "Prototype: population distributed by building footprints (VIDA) x residential share; P10-P90 is an assumed \u00b115% band; capacity from OSM tags where present, otherwise config defaults (marked ASSUMED)."
+}

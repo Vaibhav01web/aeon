@@ -1,0 +1,63 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1c1c1c;
+  --muted: #666;
+  --panel: rgba(255, 255, 255, 0.95);
+  --border: #ddd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111;
+    --fg: #eee;
+    --muted: #aaa;
+    --panel: rgba(24, 24, 24, 0.95);
+    --border: #333;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 14px/1.4 system-ui, sans-serif; }
+#map { position: absolute; inset: 0; }
+
+#panel {
+  position: absolute; top: 12px; left: 12px; width: 300px; max-height: calc(100% - 60px);
+  overflow-y: auto; padding: 12px 14px; background: var(--panel);
+  border: 1px solid var(--border); border-radius: 8px;
+}
+#panel h1 { font-size: 18px; margin: 0 0 10px; }
+#panel label { display: block; margin-bottom: 8px; color: var(--muted); }
+#panel select { display: block; width: 100%; margin-top: 2px; padding: 4px; }
+
+#panel .sub { margin: -4px 0 12px; color: var(--muted); font-size: 12px; }
+#panel h2 { font-size: 13px; margin: 14px 0 6px; }
+
+#legend { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 10px 0; color: var(--muted); font-size: 12px; }
+#legend i { display: inline-block; width: 11px; height: 11px; margin-right: 4px; vertical-align: -1px; border-radius: 2px; }
+
+#totals p { margin: 4px 0; }
+#totals .bands { font-size: 11px; color: var(--muted); }
+
+.bar-row { display: grid; grid-template-columns: 1fr 90px 56px; align-items: center; gap: 6px; font-size: 12px; margin: 4px 0; }
+.bar { height: 10px; background: #2b8c7e; border-radius: 2px; }
+.bar-val { text-align: right; font-variant-numeric: tabular-nums; }
+
+#zone-card { border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
+#zone-card p { margin: 4px 0; }
+
+.tag { font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+.tag-measured { background: #1b7837; color: #fff; }
+.tag-derived  { background: #5e3c99; color: #fff; }
+.tag-assumed  { background: #b35806; color: #fff; }
+
+.notice { font-size: 11px; color: var(--muted); font-style: italic; }
+.error { color: #d7301f; }
+
+#attribution {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 4px 10px;
+  font-size: 10px; color: var(--muted); background: var(--panel);
+}
+
+@media (max-width: 600px) {
+  #panel { left: 8px; right: 8px; width: auto; max-height: 45%; }
+}

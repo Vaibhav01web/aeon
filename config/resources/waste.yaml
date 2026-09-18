@@ -1,0 +1,55 @@
+resource: waste
+unit: "kg_per_day"
+display_unit: "TPD"
+unit_scale: 1.0e-3
+
+per_capita:
+  grams_per_capita_per_day: null  # ← FILLED AT RUNTIME by state from D16
+  source: "CPCB MSW Annual Report 2021-22, Table 1 (state-wise)"
+  source_url: "https://cpcb.nic.in/uploads/MSW/MSW_AnnualReport_2021-22.pdf"
+  confidence: measured
+  by_state_g_per_day:             # extracted from D16 - extend as needed
+    IN:    123.45                 # national average
+    DL:    526.50
+    CH:    441.50
+    MH:    260.00                 # ⚠️ VERIFY against the PDF before quoting
+    KA:    240.00                 # ⚠️ VERIFY
+    ML:     21.00
+    BR:     39.60
+  note: "Only IN / DL / CH / ML / BR were read directly from the report. Others marked VERIFY must be re-read from Table 1 before you show them to a judge."
+
+composition:                      # for the circular-economy story
+  wet_organic: 0.52
+  dry_recyclable: 0.32
+  inert_other: 0.16
+  source: "Typical Indian urban MSW composition (CPCB/SBM)"
+  confidence: assumed
+
+collection:
+  vehicle_capacity_kg: 5000
+  n_vehicles: 12
+  shift_hours: 8
+  avg_speed_kmph: 18
+  service_time_min_per_stop: 4
+  depot_lonlat: null              # null → use the city centroid
+  confidence: assumed
+
+capacity:
+  osm_tags:
+    - "amenity=waste_transfer_station"
+    - "amenity=recycling"
+    - "landuse=landfill"
+  default_capacity_kg_per_day:
+    waste_transfer_station: 1.0e5
+    recycling: 2.0e4
+    landfill: 5.0e5
+    confidence: assumed
+  service_radius_m: 1500
+
+climate:
+  diesel_kgco2_per_litre: 2.68
+  truck_kmpl: 4.0
+  methane_kgco2e_per_kg_organic_landfilled: 1.20
+  source: "IPCC 2006 GL Vol.5 default DOC/MCF for managed anaerobic landfill"
+  confidence: assumed
+  note: "Diverting wet organics to composting avoids this - the circular-economy headline number."

@@ -1,0 +1,47 @@
+# ⚠️ bbox is an approximate NMC-area box — tighten against the actual ULB
+# boundary before relying on footprint counts.
+city:
+  name: "Nagpur"
+  slug: "nagpur"
+  state: "Maharashtra"
+  state_code: "MH"
+  ulb_name: "Nagpur Municipal Corporation"
+  lgd_code: null
+  bbox: [79.00, 21.05, 79.20, 21.25]
+  utm_crs: "EPSG:32644"           # 78–84E zone; Nagpur at 79.1E is inside it
+  timezone: "Asia/Kolkata"
+  population_total: 2405421       # Census 2011 ULB total — the IPF anchor
+  population_year: 2011
+  population_growth_rate: 0.015   # ASSUMED — lower-growth tier-1 city, not independently sourced
+  area_km2: 217.56
+  ward_population_csv: null
+
+zones:
+  h3_res_model: 8
+  h3_res_display: 9
+  use_wards: true
+  min_footprints_per_zone: 5
+  min_building_area_m2: 12        # drop sheds / low-confidence detections below this footprint
+
+sentinel:
+  date_start: "2026-01-01"
+  date_end: "2026-03-31"
+  baseline_start: "2019-01-01"
+  baseline_end: "2019-03-31"
+  max_cloud_cover: 20
+  bands: ["red", "green", "blue", "nir", "swir16", "scl"]
+  resolution: 10
+
+resources: ["water", "electricity", "waste"]
+
+forecast:
+  horizon_hours: 72
+  quantiles: [0.1, 0.5, 0.9]
+  temporal_model: "MSTL"
+  seasonality: [24, 168]
+
+paths:
+  raw: "data/raw"
+  interim: "data/interim"
+  processed: "data/processed"
+  build: "build"

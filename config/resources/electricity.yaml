@@ -1,0 +1,59 @@
+resource: electricity
+unit: "kwh_per_hour"
+display_unit: "MW"
+unit_scale: 1.0e-3
+
+per_capita:
+  annual_kwh_per_capita: null     # ← FILLED AT RUNTIME from D12 (OpenCity)
+  source: "OpenCity city-level electricity consumption 2017-19"
+  source_url: "https://data.opencity.in/dataset/electricity-consumption"
+  confidence: measured
+  fallback_annual_kwh_per_capita: 1250
+  fallback_note: "National urban average; used if the city is absent from D12"
+
+sector_split:                     # from D12 where available
+  domestic: 0.42
+  commercial: 0.27
+  industrial: 0.24
+  other: 0.07
+  confidence: measured_or_assumed
+
+peak_derivation:                  # ⚠️ THE DOCUMENTED DATA GAP - see implementation.md §4.2
+  method: "state_peak_x_city_consumption_share"
+  state_peak_source: "CEA General Review 2025 / Grid-India PSP (state-level only)"
+  load_factor: 0.62               # avg load / peak load
+  confidence: assumed
+  note: "NO free city-level peak-load dataset exists for India. This step is ASSUMED. Disclose it."
+
+temporal:
+  diurnal_profile: [0.72,0.66,0.62,0.60,0.62,0.70,0.82,0.90,0.97,1.02,1.07,1.10,
+                    1.12,1.10,1.06,1.04,1.08,1.22,1.42,1.50,1.40,1.15,0.95,0.80]
+  confidence: assumed
+  weather_sensitivity:
+    temp_coeff_per_degc: 0.042    # cooling load - much stronger than water
+    base_temp_c: 26.0
+    cdd_base_c: 24.0
+    confidence: assumed
+
+capacity:
+  osm_tags:
+    - "power=substation"
+    - "power=transformer"
+    - "power=plant"
+  voltage_to_mva:                 # OSM `voltage` tag (volts) → typical MVA rating
+    "220000": 200
+    "132000": 100
+    "110000": 80
+    "33000": 20
+    "22000": 10
+    "11000": 5
+    confidence: assumed
+  default_mva_untagged: 10
+  n_minus_1_margin: 0.85          # usable fraction for reliability
+  service_radius_m: 1800
+
+climate:
+  grid_emission_factor_kgco2_per_kwh: 0.716
+  ef_source: "CEA CO2 Baseline Database for the Indian Power Sector"
+  peak_shave_ef_kgco2_per_kwh: 0.90   # marginal peaking plant is dirtier
+  confidence: assumed

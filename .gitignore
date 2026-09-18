@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+data/raw/
+data/interim/
+data/urms.duckdb
+*.duckdb_extension
+.DS_Store
+runs/*/
+!runs/.gitkeep
+# >100 MB (GitHub hard limit); re-fetch with `urms acquire buildings`
+data/processed/buildings.parquet
+graphify-out/
+*.egg-info/

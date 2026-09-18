@@ -1,0 +1,45 @@
+city:
+  name: "Pune"
+  slug: "pune"
+  state: "Maharashtra"
+  state_code: "MH"
+  ulb_name: "Pune Municipal Corporation"
+  lgd_code: null
+  bbox: [73.70, 18.40, 74.05, 18.68]
+  utm_crs: "EPSG:32643"
+  timezone: "Asia/Kolkata"
+  population_total: 3124458       # Census 2011 ULB total — the IPF anchor
+  population_year: 2011
+  population_growth_rate: 0.021   # CAGR; ASSUMED unless replaced with a cited figure
+  area_km2: 331.26
+  ward_population_csv: null
+
+zones:
+  h3_res_model: 8
+  h3_res_display: 9
+  use_wards: true
+  min_footprints_per_zone: 5
+  min_building_area_m2: 12        # drop sheds / low-confidence detections below this footprint
+
+sentinel:
+  date_start: "2026-01-01"
+  date_end: "2026-03-31"
+  baseline_start: "2019-01-01"
+  baseline_end: "2019-03-31"
+  max_cloud_cover: 20
+  bands: ["red", "green", "blue", "nir", "swir16", "scl"]
+  resolution: 10
+
+resources: ["water", "electricity", "waste"]
+
+forecast:
+  horizon_hours: 72
+  quantiles: [0.1, 0.5, 0.9]
+  temporal_model: "MSTL"
+  seasonality: [24, 168]
+
+paths:
+  raw: "data/raw"
+  interim: "data/interim"
+  processed: "data/processed"
+  build: "build"

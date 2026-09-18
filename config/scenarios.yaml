@@ -1,0 +1,25 @@
+scenarios:
+  - id: baseline
+    label: "Baseline"
+    shocks: {}
+  - id: pop_growth_10
+    label: "+10% population"
+    shocks: { population_multiplier: 1.10 }
+  - id: pop_growth_2035
+    label: "2035 projected population"
+    shocks: { population_multiplier: 1.24 }
+  - id: heatwave
+    label: "Heatwave (+6 degC)"
+    shocks: { temperature_delta_c: 6.0 }
+  - id: festival
+    label: "Festival day (+25% commercial)"
+    shocks: { landuse_multiplier: { commercial: 1.25, institutional: 1.15 } }
+  - id: asset_outage
+    label: "Largest asset offline"
+    shocks: { disable_top_n_assets: 1 }
+  - id: nrw_fixed
+    label: "NRW cut 35% → 20%"
+    shocks: { water_nrw_fraction: 0.20 }
+  - id: organics_diverted
+    label: "80% wet waste composted"
+    shocks: { waste_organic_diversion: 0.80 }

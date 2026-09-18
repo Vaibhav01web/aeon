@@ -1,0 +1,59 @@
+resource: water
+unit: "litres_per_day"
+display_unit: "MLD"              # million litres/day
+unit_scale: 1.0e-6
+
+per_capita:
+  domestic_lpcd: 135
+  source: "CPHEEO Manual / MoHUA SLB Handbook - benchmark for cities with sewerage"
+  source_url: "https://cpheeo.gov.in/upload/uploadfiles/files/Handbook.pdf"
+  confidence: normative           # a policy benchmark, not a measurement
+  fallback_lpcd: 70               # towns without piped sewerage
+
+non_domestic_multipliers:         # applied to zone base demand by dominant land use
+  residential: 1.00
+  commercial:  1.35
+  industrial:  1.60
+  institutional: 1.20
+  mixed: 1.15
+  confidence: assumed
+  note: "Derived from CPHEEO non-domestic allowance guidance. SWEEP THESE in scenarios."
+
+losses:
+  nrw_fraction: 0.35              # non-revenue water
+  source: "Typical Indian ULB NRW range 30-50% (MoHUA SLB reporting)"
+  confidence: assumed
+
+temporal:
+  diurnal_profile: [0.30,0.22,0.18,0.18,0.25,0.70,1.55,1.90,1.75,1.35,1.10,1.00,
+                    0.95,0.90,0.88,0.95,1.15,1.45,1.60,1.40,1.05,0.75,0.50,0.38]
+  profile_note: "24 hourly multipliers, mean must be ~1.0. Twin morning/evening peaks."
+  confidence: assumed
+  weather_sensitivity:
+    temp_coeff_per_degc: 0.018    # +1.8% demand per +1 degC above base
+    base_temp_c: 28.0
+    rain_coeff_per_mm: -0.004
+    confidence: assumed
+
+capacity:
+  osm_tags:
+    - "man_made=water_tower"
+    - "man_made=water_works"
+    - "man_made=reservoir_covered"
+    - "man_made=storage_tank"
+    - "landuse=reservoir"
+  default_capacity_litres:        # used when OSM has no volume/capacity tag
+    water_tower: 1.0e6
+    water_works: 5.0e7
+    reservoir_covered: 1.0e7
+    storage_tank: 5.0e5
+    confidence: assumed
+    note: "MUST be tagged ASSUMED in the UI. Replace with ULB data if available."
+  service_radius_m: 2500
+
+climate:
+  pumping_kwh_per_ml: 450         # energy to treat+pump 1 ML
+  source: "Typical Indian urban water supply energy intensity"
+  confidence: assumed
+  grid_emission_factor_kgco2_per_kwh: 0.716
+  ef_source: "CEA CO2 Baseline Database for the Indian Power Sector"
