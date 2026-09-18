@@ -13,21 +13,20 @@
   <script src="https://cdn.jsdelivr.net/npm/deck.gl@9.4.0/dist.min.js"></script>
 </head>
 <body>
-  <div id="map"></div>
-
-  <aside id="panel">
-    <header id="panel-head">
-      <h1>Aeon <span id="city-name"></span></h1>
-      <button id="toggle" class="ghost" type="button" aria-expanded="true" aria-controls="panel-body">Hide</button>
+  <main id="dash">
+    <header class="dash-head">
+      <div>
+        <h1>Aeon <span id="city-name"></span></h1>
+        <p class="sub">Neighbourhood demand, capacity and shortage risk — open data, ₹0.</p>
+      </div>
     </header>
 
-    <div id="panel-body">
+    <section class="controls card">
       <div class="seg tabs" role="tablist" aria-label="Resource">
         <button type="button" role="tab" data-resource="water" aria-selected="true">Water</button>
         <button type="button" role="tab" data-resource="electricity" aria-selected="false">Electricity</button>
         <button type="button" role="tab" data-resource="waste" aria-selected="false">Waste</button>
       </div>
-
       <div class="row2">
         <label>Layer
           <select id="layer">
@@ -42,44 +41,58 @@
           <select id="scenario"></select>
         </label>
       </div>
+    </section>
 
-      <section class="hero">
+    <div class="cards">
+      <section class="card hero">
         <span class="eyebrow" id="hero-label">City demand</span>
         <div class="hero-row">
           <span class="hero-value" id="hero-value">—</span>
           <span class="delta" id="hero-delta" hidden></span>
         </div>
+        <p class="hero-sub" id="hero-sub"></p>
       </section>
 
-      <section id="legend"></section>
+      <section class="card" id="legend"></section>
 
-      <section id="zone-card" hidden></section>
-      <p class="hint" id="hint">Tap a hexagon for details.</p>
+      <section class="card" id="top-card">
+        <h2 id="top-title">Riskiest zones</h2>
+        <ol id="top-list"></ol>
+      </section>
 
-      <details id="climate">
-        <summary>Climate impact <span class="muted">tCO₂e / yr</span></summary>
+      <section class="card" id="zone-card">
+        <h2>Selected zone</h2>
+        <p class="hint">Click a hexagon on the map, or a zone in the list.</p>
+      </section>
+
+      <section class="card" id="climate">
+        <h2>Climate impact <span class="muted">tCO₂e / year</span></h2>
         <div id="climate-bars"></div>
-      </details>
-      <details>
-        <summary>How it works</summary>
-        <p class="notice" id="notice"></p>
-      </details>
-      <details>
-        <summary>Sources</summary>
-        <p class="notice" id="attribution"></p>
-      </details>
+      </section>
     </div>
-  </aside>
 
-  <div id="map-controls" role="group" aria-label="Map settings">
-    <div class="seg small">
-      <button type="button" data-basemap="streets" aria-pressed="true">Map</button>
-      <button type="button" data-basemap="satellite" aria-pressed="false">Satellite</button>
-      <button type="button" data-basemap="sentinel2" aria-pressed="false">Sentinel-2</button>
+    <details class="card">
+      <summary>How it works</summary>
+      <p class="notice" id="notice"></p>
+    </details>
+    <details class="card">
+      <summary>Sources</summary>
+      <p class="notice" id="attribution"></p>
+    </details>
+  </main>
+
+  <div id="map-pane">
+    <div id="map"></div>
+    <div id="map-controls" role="group" aria-label="Map settings">
+      <div class="seg small">
+        <button type="button" data-basemap="streets" aria-pressed="true">Map</button>
+        <button type="button" data-basemap="satellite" aria-pressed="false">Satellite</button>
+        <button type="button" data-basemap="sentinel2" aria-pressed="false">Sentinel-2</button>
+      </div>
+      <label class="opacity">Opacity
+        <input id="opacity" type="range" min="0.15" max="1" step="0.05" value="0.72">
+      </label>
     </div>
-    <label class="opacity">Opacity
-      <input id="opacity" type="range" min="0.15" max="1" step="0.05" value="0.72">
-    </label>
   </div>
 
   <script src="app.js"></script>

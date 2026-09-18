@@ -4,11 +4,11 @@
   "label": "Baseline",
   "risk_by_band": {
    "water": {
-    "low": 410,
-    "medium": 307,
-    "no mapped capacity": 235,
-    "high": 205,
-    "critical": 103
+    "low": 397,
+    "medium": 298,
+    "no mapped capacity": 267,
+    "high": 198,
+    "critical": 100
    },
    "electricity": {
     "no mapped capacity": 795,
@@ -35,11 +35,11 @@
   "label": "+10% population",
   "risk_by_band": {
    "water": {
-    "low": 389,
-    "medium": 308,
-    "no mapped capacity": 235,
-    "high": 223,
-    "critical": 105
+    "low": 372,
+    "medium": 293,
+    "no mapped capacity": 267,
+    "high": 221,
+    "critical": 107
    },
    "electricity": {
     "no mapped capacity": 795,
@@ -66,11 +66,11 @@
   "label": "2035 projected population",
   "risk_by_band": {
    "water": {
-    "low": 359,
-    "medium": 304,
-    "high": 252,
-    "no mapped capacity": 235,
-    "critical": 110
+    "low": 344,
+    "medium": 297,
+    "no mapped capacity": 267,
+    "high": 243,
+    "critical": 109
    },
    "electricity": {
     "no mapped capacity": 795,
@@ -97,11 +97,11 @@
   "label": "Heatwave (+6 degC)",
   "risk_by_band": {
    "water": {
-    "low": 388,
-    "medium": 308,
-    "no mapped capacity": 235,
+    "low": 371,
+    "medium": 292,
+    "no mapped capacity": 267,
     "high": 223,
-    "critical": 106
+    "critical": 107
    },
    "electricity": {
     "no mapped capacity": 795,
@@ -128,11 +128,11 @@
   "label": "Festival day (+25% commercial)",
   "risk_by_band": {
    "water": {
-    "low": 410,
-    "medium": 306,
-    "no mapped capacity": 235,
-    "high": 206,
-    "critical": 103
+    "low": 396,
+    "medium": 298,
+    "no mapped capacity": 267,
+    "high": 199,
+    "critical": 100
    },
    "electricity": {
     "no mapped capacity": 795,
@@ -159,11 +159,11 @@
   "label": "Largest asset offline",
   "risk_by_band": {
    "water": {
-    "low": 394,
-    "medium": 313,
-    "no mapped capacity": 235,
-    "high": 215,
-    "critical": 103
+    "low": 381,
+    "medium": 303,
+    "no mapped capacity": 267,
+    "high": 209,
+    "critical": 100
    },
    "electricity": {
     "no mapped capacity": 808,
@@ -190,11 +190,11 @@
   "label": "NRW cut 35% \u2192 20%",
   "risk_by_band": {
    "water": {
-    "low": 467,
-    "medium": 293,
-    "no mapped capacity": 235,
-    "high": 169,
-    "critical": 96
+    "low": 450,
+    "medium": 290,
+    "no mapped capacity": 267,
+    "high": 159,
+    "critical": 94
    },
    "electricity": {
     "no mapped capacity": 795,
@@ -221,11 +221,11 @@
   "label": "80% wet waste composted",
   "risk_by_band": {
    "water": {
-    "low": 410,
-    "medium": 307,
-    "no mapped capacity": 235,
-    "high": 205,
-    "critical": 103
+    "low": 397,
+    "medium": 298,
+    "no mapped capacity": 267,
+    "high": 198,
+    "critical": 100
    },
    "electricity": {
     "no mapped capacity": 795,

@@ -57,7 +57,10 @@ def _assets(cfg) -> gpd.GeoDataFrame:
 
 
 def _capacity(zones_proj: gpd.GeoDataFrame, assets: gpd.GeoDataFrame, resource: str, cfg, drop_top_n: int = 0):
-    a = assets[assets.resource == resource].sort_values("capacity", ascending=False).iloc[drop_top_n:]
+    # Assets with no capacity (e.g. landuse=reservoir, a raw-water source with no
+    # configured default) must not make a zone count as "mapped".
+    a = assets[(assets.resource == resource) & (assets.capacity > 0)]
+    a = a.sort_values("capacity", ascending=False).iloc[drop_top_n:]
     n = len(zones_proj)
     cap, n_assets, n_tagged = np.zeros(n), np.zeros(n, int), np.zeros(n, int)
     if a.empty:
