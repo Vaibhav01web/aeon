@@ -175,7 +175,7 @@ async function main() {
   map.on('error', () => {
     if (!fellBack && !map.isStyleLoaded()) { fellBack = true; map.setStyle(BLANK_STYLE); }
   });
-  overlay = new deck.MapboxOverlay({ layers: [] });
+  overlay = new deck.MapLibreOverlay({ layers: [] });
   map.addControl(overlay);
 
   document.getElementById('resource').onchange = e => { state.resource = e.target.value; render(); };
