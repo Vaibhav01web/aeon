@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Aeon Resource Planner</title>
   <!-- maplibre-gl v6 is ESM-only (no UMD dist/maplibre-gl.js); v5 is the last UMD line. -->
   <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" rel="stylesheet">
@@ -16,52 +16,67 @@
   <div id="map"></div>
 
   <aside id="panel">
-    <h1>Aeon <span id="city-name"></span></h1>
-    <p class="sub">Per-neighbourhood demand, capacity and shortage risk for water, electricity and waste — open data, ₹0.</p>
+    <header id="panel-head">
+      <div>
+        <h1>Aeon <span id="city-name"></span></h1>
+        <p class="sub">Neighbourhood demand, capacity and shortage risk — open data, ₹0.</p>
+      </div>
+      <button id="toggle" type="button" aria-expanded="true" aria-controls="panel-body">Hide</button>
+    </header>
 
-    <label>Resource
-      <select id="resource">
-        <option value="water">Water</option>
-        <option value="electricity">Electricity</option>
-        <option value="waste">Waste</option>
-      </select>
-    </label>
+    <div id="panel-body">
+      <div class="controls">
+        <label>Resource
+          <select id="resource">
+            <option value="water">Water</option>
+            <option value="electricity">Electricity</option>
+            <option value="waste">Waste</option>
+          </select>
+        </label>
+        <label>Layer
+          <select id="layer">
+            <option value="risk">Shortage risk</option>
+            <option value="demand">Demand (P50)</option>
+            <option value="capacity">Capacity</option>
+            <option value="gap">Gap (P90 − capacity)</option>
+            <option value="population">Population</option>
+          </select>
+        </label>
+        <label class="wide">Scenario
+          <select id="scenario"></select>
+        </label>
+      </div>
 
-    <label>Layer
-      <select id="layer">
-        <option value="risk">Shortage risk</option>
-        <option value="demand">Demand (P50)</option>
-        <option value="capacity">Capacity</option>
-        <option value="gap">Gap (P90 − capacity)</option>
-        <option value="population">Population</option>
-      </select>
-    </label>
+      <div id="totals"></div>
 
-    <label>Scenario
-      <select id="scenario"></select>
-    </label>
+      <div id="legend">
+        <span><i style="background:#fdd49e"></i>low</span>
+        <span><i style="background:#fc8d59"></i>medium</span>
+        <span><i style="background:#d7301f"></i>high</span>
+        <span><i style="background:#7f0000"></i>critical</span>
+        <span><i style="background:#b8b8b8"></i>no mapped capacity</span>
+      </div>
 
-    <div id="totals"></div>
+      <section id="zone-card" hidden></section>
+      <p class="hint" id="hint">Tap a hexagon for details.</p>
 
-    <div id="legend">
-      <span><i style="background:#fdd49e"></i>low</span>
-      <span><i style="background:#fc8d59"></i>medium</span>
-      <span><i style="background:#d7301f"></i>high</span>
-      <span><i style="background:#7f0000"></i>critical</span>
-      <span><i style="background:#b8b8b8"></i>no mapped capacity</span>
+      <details id="climate">
+        <summary>Climate impact (tCO₂e / year)</summary>
+        <div id="climate-bars"></div>
+      </details>
+
+      <details>
+        <summary>How these numbers are made</summary>
+        <p class="notice" id="notice"></p>
+      </details>
+
+      <details>
+        <summary>Data sources &amp; attribution</summary>
+        <p class="notice" id="attribution"></p>
+      </details>
     </div>
-
-    <section id="zone-card" hidden></section>
-
-    <section id="climate">
-      <h2>Climate impact (tCO₂e / year)</h2>
-      <div id="climate-bars"></div>
-    </section>
-
-    <p class="notice" id="notice"></p>
   </aside>
 
-  <footer id="attribution"></footer>
   <script src="app.js"></script>
 </body>
 </html>

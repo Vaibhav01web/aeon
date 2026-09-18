@@ -62,9 +62,21 @@ function fmt(v, resource) {
   return `${(v * scale).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${unit}`;
 }
 
+const isPhone = () => window.matchMedia('(max-width: 700px)').matches;
+
+function setCollapsed(collapsed) {
+  const panel = document.getElementById('panel');
+  const btn = document.getElementById('toggle');
+  panel.classList.toggle('collapsed', collapsed);
+  btn.textContent = collapsed ? 'Show' : 'Hide';
+  btn.setAttribute('aria-expanded', String(!collapsed));
+}
+
 function showZone(d) {
   const card = document.getElementById('zone-card');
   card.hidden = false;
+  document.getElementById('hint').hidden = true;
+  setCollapsed(false);
   card.replaceChildren();
   const add = (label, value, tag) => {
     const p = document.createElement('p');
@@ -87,6 +99,7 @@ function showZone(d) {
   add('Capacity', fmt(d.capacity, r), d.capacity_provenance === 'osm_tagged' ? 'MEASURED' : 'ASSUMED');
   add('Risk', d.risk_score === null ? d.risk_band : `${d.risk_score.toFixed(0)} / 100 (${d.risk_band})`);
   add('Why', d.top_driver);
+  card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
 function renderTotals() {
@@ -164,15 +177,27 @@ async function main() {
     render();
   };
 
+  document.getElementById('toggle').onclick = () =>
+    setCollapsed(!document.getElementById('panel').classList.contains('collapsed'));
+
   const [lon0, lat0, lon1, lat1] = meta.city.bbox;
+  const panelH = document.getElementById('panel').offsetHeight;
   const map = new maplibregl.Map({
     container: 'map',
     style: 'https://tiles.openfreemap.org/styles/liberty',
     bounds: [[lon0, lat0], [lon1, lat1]],
     fitBoundsOptions: {
-      padding: window.innerWidth > 700 ? { top: 20, bottom: 40, right: 20, left: 340 } : 20,
+      padding: isPhone()
+        ? { top: 12, left: 12, right: 12, bottom: panelH + 12 }
+        : { top: 20, bottom: 20, right: 20, left: 350 },
     },
+    dragRotate: false,
+    pitchWithRotate: false,
+    touchPitch: false,
+    attributionControl: { compact: true },
   });
+  map.touchZoomRotate.disableRotation();
+  map.keyboard.disableRotation();
   let fellBack = false;
   map.on('error', () => {
     if (!fellBack && !map.isStyleLoaded()) { fellBack = true; map.setStyle(BLANK_STYLE); }
