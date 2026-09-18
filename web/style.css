@@ -134,14 +134,44 @@ summary { cursor: pointer; font-size: 13px; font-weight: 650; }
   .cards { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* phones: map on top, dashboard below */
+/* phones: map on top, dashboard scrolls below with sticky controls */
 @media (max-width: 700px) {
-  body { grid-template-columns: minmax(0, 1fr); grid-template-rows: 46vh minmax(0, 1fr); }
+  body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 55vh minmax(0, 1fr);
+    grid-template-rows: 55dvh minmax(0, 1fr);  /* dvh tracks the mobile URL bar */
+    height: 100vh; height: 100dvh;
+  }
   #map-pane { grid-row: 1; }
-  #dash { grid-row: 2; padding: 14px 14px calc(20px + env(safe-area-inset-bottom)); border-right: 0; border-top: 1px solid var(--border); }
-  .sub { display: none; }
-  .row2 select { font-size: 16px; }  /* 16px stops iOS zooming on focus */
+  #dash {
+    grid-row: 2; padding: 0 12px calc(24px + env(safe-area-inset-bottom));
+    border-right: 0; border-top: 1px solid var(--border);
+  }
+  .dash-head { display: none; }
+
+  /* resource + layer + scenario stay reachable while scrolling */
+  .controls {
+    position: sticky; top: 0; z-index: 5; margin: 0 -12px; padding: 10px 12px;
+    border-radius: 0; border-width: 0 0 1px; gap: 8px; background: var(--bg);
+  }
+  .seg.tabs button { padding: 10px 6px; font-size: 14px; }
+  .row2 { gap: 8px; }
+  .row2 select { font-size: 16px; padding: 9px 8px; }  /* 16px stops iOS zooming on focus */
+
+  .cards { gap: 10px; margin-top: 10px; }
+  .card { padding: 12px 14px; border-radius: 12px; }
   .hero-value { font-size: 26px; }
-  #map-controls { top: 10px; right: 10px; width: 232px; padding: 6px; }
-  .seg.small button { padding: 5px 4px; font-size: 11px; }
+  .hero-sub { font-size: 11px; }
+  .keys { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .key { font-size: 10px; }
+  .key b { font-size: 13px; }
+
+  /* a tapped zone jumps to the top of the cards, below the sticky controls */
+  .cards.has-selection #zone-card { order: -1; }
+  #zone-card { scroll-margin-top: 150px; }
+  #top-list button { padding: 9px 4px; }
+
+  #map-controls { top: 8px; right: 8px; width: auto; padding: 4px; border-radius: 10px; }
+  #map-controls .opacity { display: none; }
+  .seg.small button { padding: 6px 9px; font-size: 12px; }
 }

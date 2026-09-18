@@ -111,7 +111,9 @@ function fmtRange(lo, hi, resource = state.resource) {
   const n = v => (v * s).toLocaleString(undefined, { maximumFractionDigits: v * s >= 10 ? 1 : 2 });
   return `${n(lo)}–${n(hi)} ${state.meta.units[resource]}`;
 }
-const topPct = d => `top ${Math.max(1, Math.round(100 - d.risk_score))}%`;
+const topPct = d => (d.risk_score >= 50
+  ? `top ${Math.max(1, Math.round(100 - d.risk_score))}%`
+  : `lowest ${Math.max(1, Math.round(d.risk_score))}%`);
 const fmtValue = d => (state.layer === 'population' ? fmtPeople(d.population)
   : state.layer === 'risk' ? topPct(d) : fmt(valueFor(d)));
 const shortId = id => `${id.slice(0, 9)}…`;
@@ -244,8 +246,9 @@ function selectZone(d, fly) {
     const [lat, lng] = h3.cellToLatLng(d.zone_id);
     map.flyTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), 13), speed: 1.4 });
   }
-  if (isPhone()) $('zone-card').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  document.querySelector('.cards').classList.add('has-selection');
   render();
+  if (isPhone()) $('zone-card').scrollIntoView({ block: 'start', behavior: 'smooth' });
 }
 
 // ---- map ------------------------------------------------------------------
@@ -327,7 +330,7 @@ async function main() {
     container: 'map',
     style: BASEMAPS[state.basemap].style,
     bounds: [[lon0, lat0], [lon1, lat1]],
-    fitBoundsOptions: { padding: isPhone() ? { top: 64, left: 8, right: 8, bottom: 8 } : { top: 90, left: 20, right: 20, bottom: 20 } },
+    fitBoundsOptions: { padding: isPhone() ? { top: 48, left: 6, right: 6, bottom: 6 } : { top: 90, left: 20, right: 20, bottom: 20 } },
     dragRotate: false,
     pitchWithRotate: false,
     touchPitch: false,
@@ -336,6 +339,12 @@ async function main() {
   map.touchZoomRotate.disableRotation();
   map.keyboard.disableRotation();
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+  // Compact attribution opens itself on load; on phones that covers the map.
+  const collapseAttribution = () => {
+    if (isPhone()) document.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
+  };
+  map.on('load', collapseAttribution);
+  map.on('styledata', collapseAttribution);
 
   // Only fall back to a blank ground if the first style itself fails to load;
   // individual tile errors and later basemap switches must not trigger it.
