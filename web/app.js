@@ -46,7 +46,7 @@ const TOP_TITLE = {
 };
 
 const state = {
-  resource: 'water', layer: 'risk', scenario: 'baseline', basemap: 'streets', opacity: 0.72,
+  resource: 'water', layer: 'risk', scenario: 'baseline', basemap: 'satellite', opacity: BASEMAPS.satellite.opacity,
   selected: null, rows: [], meta: null, scenarios: [],
 };
 const cache = {};
@@ -325,7 +325,7 @@ async function main() {
   const [lon0, lat0, lon1, lat1] = meta.city.bbox;
   map = new maplibregl.Map({
     container: 'map',
-    style: BASEMAPS.streets.style,
+    style: BASEMAPS[state.basemap].style,
     bounds: [[lon0, lat0], [lon1, lat1]],
     fitBoundsOptions: { padding: isPhone() ? { top: 64, left: 8, right: 8, bottom: 8 } : { top: 90, left: 20, right: 20, bottom: 20 } },
     dragRotate: false,
