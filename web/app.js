@@ -6,6 +6,9 @@ const RISK_COLORS = {
   critical: [127, 0, 0],
   'no mapped capacity': [150, 150, 150, 90],
 };
+const BANDS = ['critical', 'high', 'medium', 'low', 'no mapped capacity'];
+const BAND_SHORT = { 'no mapped capacity': 'no data' };
+const rgb = c => `rgb(${c[0]},${c[1]},${c[2]})`;
 
 const BLANK_STYLE = {
   version: 8, sources: {},
@@ -34,10 +37,20 @@ const BASEMAPS = {
   },
 };
 
-const state = { resource: 'water', layer: 'risk', scenario: 'baseline', basemap: 'streets', opacity: 0.72, rows: [], meta: null, scenarios: [] };
-let map;
+const LAYER_LABEL = { demand: 'Demand (P50)', capacity: 'Capacity', gap: 'Gap (P90 − capacity)', population: 'Population' };
+
+const state = {
+  resource: 'water', layer: 'risk', scenario: 'baseline', basemap: 'streets', opacity: 0.72,
+  rows: [], meta: null, scenarios: [],
+};
 const cache = {};
-let overlay;
+let map, overlay;
+const $ = id => document.getElementById(id);
+const el = (tag, props = {}, ...children) => {
+  const n = Object.assign(document.createElement(tag), props);
+  n.append(...children);
+  return n;
+};
 
 async function loadJSON(path) {
   const r = await fetch(path);
@@ -62,6 +75,8 @@ async function loadScenario(id) {
   return cache[id];
 }
 
+const currentRows = () => state.rows.filter(d => d.resource === state.resource);
+
 function valueFor(d) {
   switch (state.layer) {
     case 'demand': return d.demand_p50;
@@ -78,114 +93,152 @@ function colorFor(d, maxVal) {
   return [253 - 126 * t, 212 - 212 * t, 158 - 158 * t];
 }
 
-function fmt(v, resource) {
+function fmt(v, resource = state.resource) {
   if (v === null || v === undefined) return '—';
-  const scale = state.meta.unit_scale[resource];
-  const unit = state.meta.units[resource];
-  return `${(v * scale).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${unit}`;
+  const scaled = v * state.meta.unit_scale[resource];
+  const digits = Math.abs(scaled) >= 100 ? 0 : Math.abs(scaled) >= 10 ? 1 : 2;
+  return `${scaled.toLocaleString(undefined, { maximumFractionDigits: digits })} ${state.meta.units[resource]}`;
+}
+const fmtPeople = v => Math.round(v).toLocaleString();
+function fmtRange(lo, hi, resource = state.resource) {
+  const s = state.meta.unit_scale[resource];
+  const n = v => (v * s).toLocaleString(undefined, { maximumFractionDigits: v * s >= 10 ? 1 : 2 });
+  return `${n(lo)}–${n(hi)} ${state.meta.units[resource]}`;
 }
 
 const isPhone = () => window.matchMedia('(max-width: 700px)').matches;
 
 function setCollapsed(collapsed) {
-  const panel = document.getElementById('panel');
-  const btn = document.getElementById('toggle');
-  panel.classList.toggle('collapsed', collapsed);
-  btn.textContent = collapsed ? 'Show' : 'Hide';
-  btn.setAttribute('aria-expanded', String(!collapsed));
+  $('panel').classList.toggle('collapsed', collapsed);
+  $('toggle').textContent = collapsed ? 'Show' : 'Hide';
+  $('toggle').setAttribute('aria-expanded', String(!collapsed));
+}
+
+// ---- panel sections -------------------------------------------------------
+
+function renderHero() {
+  const r = state.resource;
+  const s = state.scenarios.find(x => x.scenario_id === state.scenario);
+  const base = state.scenarios.find(x => x.scenario_id === 'baseline');
+  $('hero-label').textContent = state.scenario === 'baseline' ? 'City demand' : `City demand · ${s.label}`;
+  $('hero-value').textContent = fmt(s.total_demand_p50_by_resource[r]);
+  const delta = $('hero-delta');
+  if (state.scenario === 'baseline') { delta.hidden = true; return; }
+  const pct = 100 * (s.total_demand_p50_by_resource[r] / base.total_demand_p50_by_resource[r] - 1);
+  delta.hidden = false;
+  delta.className = `delta ${pct > 0.05 ? 'up' : pct < -0.05 ? 'down' : 'flat'}`;
+  delta.textContent = `${pct > 0 ? '+' : ''}${pct.toFixed(1)}% vs baseline`;
+}
+
+function renderLegend() {
+  const box = $('legend');
+  box.replaceChildren();
+  const rows = currentRows();
+
+  if (state.layer === 'risk') {
+    const counts = Object.fromEntries(BANDS.map(b => [b, 0]));
+    for (const d of rows) counts[d.risk_band] = (counts[d.risk_band] || 0) + 1;
+    const stack = el('div', { className: 'stack' });
+    for (const b of BANDS) {
+      if (!counts[b]) continue;
+      const seg = el('span', { title: `${b}: ${counts[b]} zones` });
+      seg.style.width = `${(100 * counts[b] / rows.length).toFixed(2)}%`;
+      seg.style.background = b === 'no mapped capacity' ? 'rgba(150,150,150,0.45)' : rgb(RISK_COLORS[b]);
+      stack.append(seg);
+    }
+    const keys = el('div', { className: 'keys' });
+    for (const b of BANDS) {
+      const swatch = el('i');
+      swatch.style.background = b === 'no mapped capacity' ? 'rgba(150,150,150,0.45)' : rgb(RISK_COLORS[b]);
+      keys.append(el('div', { className: 'key' }, el('b', { textContent: counts[b] }), swatch, BAND_SHORT[b] || b));
+    }
+    box.append(stack, keys, el('p', { className: 'caption',
+      textContent: 'Zones ranked within the city: top 10% critical, next 20% high, next 30% medium.' }));
+    return;
+  }
+
+  const vals = rows.map(valueFor).filter(v => v !== null && v !== undefined);
+  const max = Math.max(...vals, 0);
+  const label = state.layer === 'population' ? fmtPeople : v => fmt(v);
+  box.append(
+    el('span', { className: 'eyebrow', textContent: `${LAYER_LABEL[state.layer]} per zone` }),
+    el('div', { className: 'ramp' }),
+    el('div', { className: 'ramp-labels' }, el('span', { textContent: label(0) }), el('span', { textContent: label(max) })),
+  );
 }
 
 function showZone(d) {
-  const card = document.getElementById('zone-card');
+  const r = state.resource;
+  const card = $('zone-card');
   card.hidden = false;
-  document.getElementById('hint').hidden = true;
+  $('hint').hidden = true;
   setCollapsed(false);
-  card.replaceChildren();
-  const add = (label, value, tag) => {
-    const p = document.createElement('p');
-    const b = document.createElement('b');
-    b.textContent = `${label}: `;
-    p.append(b, document.createTextNode(value));
-    if (tag) {
-      const s = document.createElement('span');
-      s.className = `tag tag-${tag.toLowerCase()}`;
-      s.textContent = tag;
-      p.append(' ', s);
-    }
-    card.append(p);
-  };
-  const r = state.resource;
-  add('Zone', d.zone_id);
-  add('Population', Math.round(d.population).toLocaleString(), 'DERIVED');
-  add('Demand P50', fmt(d.demand_p50, r), 'DERIVED');
-  add('P10 – P90', `${fmt(d.demand_p10, r)} – ${fmt(d.demand_p90, r)}`, 'ASSUMED');
-  add('Capacity', fmt(d.capacity, r), d.capacity_provenance === 'osm_tagged' ? 'MEASURED' : 'ASSUMED');
-  add('Risk', d.risk_score === null ? d.risk_band
-    : `${d.risk_band} — riskier than ${d.risk_score.toFixed(0)}% of mapped zones`);
-  add('Why', d.top_driver);
-  card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-}
 
-function renderTotals() {
-  const s = state.scenarios.find(x => x.scenario_id === state.scenario);
-  const el = document.getElementById('totals');
-  if (!s) { el.textContent = ''; return; }
-  const r = state.resource;
-  const bands = s.risk_by_band[r] || {};
-  el.replaceChildren();
-  const total = document.createElement('p');
-  total.append(Object.assign(document.createElement('b'), { textContent: 'City demand: ' }),
-               fmt(s.total_demand_p50_by_resource[r], r));
-  const b = document.createElement('p');
-  b.className = 'bands';
-  b.textContent = ['critical', 'high', 'medium', 'low', 'no mapped capacity']
-    .map(k => `${k}: ${bands[k] || 0}`).join(' · ');
-  el.append(total, b);
+  const badge = el('span', { className: 'badge', textContent: d.risk_band });
+  badge.style.background = d.risk_band === 'no mapped capacity' ? '#8a8f95' : rgb(RISK_COLORS[d.risk_band]);
+  if (d.risk_band === 'low') badge.style.color = '#4a2c00';
+
+  const kv = el('dl', { className: 'kv' });
+  const row = (k, v, tag) => {
+    const dd = el('dd', {}, v);
+    if (tag) dd.append(el('span', { className: `tag tag-${tag.toLowerCase()}`, textContent: tag }));
+    kv.append(el('dt', { textContent: k }), dd);
+  };
+  row('Population', fmtPeople(d.population), 'DERIVED');
+  row('Demand', fmt(d.demand_p50), 'DERIVED');
+  row('P10–P90', fmtRange(d.demand_p10, d.demand_p90), 'ASSUMED');
+  row('Capacity', fmt(d.capacity), d.capacity_provenance === 'osm_tagged' ? 'MEASURED' : 'ASSUMED');
+  if (d.risk_score !== null) row('Risk rank', `above ${d.risk_score.toFixed(0)}% of zones`);
+
+  card.replaceChildren(
+    el('h2', {}, el('span', { textContent: `Zone ${d.zone_id.slice(0, 9)}…` }), badge),
+    kv,
+    el('p', { className: 'why', textContent: `Main driver: ${d.top_driver}` }),
+  );
+  card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
 function renderClimate() {
   const c = state.meta.climate_tco2e_per_year;
   const max = Math.max(...Object.values(c));
-  const el = document.getElementById('climate-bars');
-  el.replaceChildren();
+  const box = $('climate-bars');
+  box.replaceChildren();
   for (const [label, v] of Object.entries(c)) {
-    const row = document.createElement('div');
-    row.className = 'bar-row';
-    const name = Object.assign(document.createElement('span'), { className: 'bar-label', textContent: label });
-    const bar = Object.assign(document.createElement('span'), { className: 'bar' });
+    const bar = el('span', { className: 'bar' });
     bar.style.width = `${(100 * v / max).toFixed(1)}%`;
-    const val = Object.assign(document.createElement('span'), { className: 'bar-val', textContent: Math.round(v).toLocaleString() });
-    row.append(name, bar, val);
-    el.append(row);
+    box.append(el('div', { className: 'bar-row' },
+      el('span', { textContent: label }), bar,
+      el('span', { className: 'bar-val', textContent: Math.round(v).toLocaleString() })));
   }
-  const src = Object.assign(document.createElement('p'), { className: 'notice',
-    textContent: `Emission factors: ${state.meta.climate_sources.join('; ')}` });
-  el.append(src);
+  box.append(el('p', { className: 'notice', textContent: `Emission factors: ${state.meta.climate_sources.join('; ')}` }));
 }
 
+// ---- map ------------------------------------------------------------------
+
 function render() {
-  const rows = state.rows.filter(d => d.resource === state.resource);
+  const rows = currentRows();
   const maxVal = Math.max(...rows.map(d => valueFor(d) || 0));
-  const layer = new deck.H3HexagonLayer({
-    id: 'zones',
-    data: rows,
-    getHexagon: d => d.zone_id,
-    getFillColor: d => colorFor(d, maxVal),
-    getElevation: d => d.demand_p50,
-    extruded: false,
-    stroked: true,
-    getLineColor: [255, 255, 255, 110],
-    lineWidthUnits: 'pixels',
-    getLineWidth: 0.6,
-    pickable: true,
-    autoHighlight: true,
-    highlightColor: [255, 255, 255, 90],
-    opacity: state.opacity,
-    onClick: ({ object }) => object && showZone(object),
-    updateTriggers: { getFillColor: [state.layer, state.resource, state.scenario] },
+  overlay.setProps({
+    layers: [new deck.H3HexagonLayer({
+      id: 'zones',
+      data: rows,
+      getHexagon: d => d.zone_id,
+      getFillColor: d => colorFor(d, maxVal),
+      extruded: false,
+      stroked: true,
+      getLineColor: [255, 255, 255, 110],
+      lineWidthUnits: 'pixels',
+      getLineWidth: 0.6,
+      pickable: true,
+      autoHighlight: true,
+      highlightColor: [255, 255, 255, 90],
+      opacity: state.opacity,
+      onClick: ({ object }) => object && showZone(object),
+      updateTriggers: { getFillColor: [state.layer, state.resource, state.scenario] },
+    })],
   });
-  overlay.setProps({ layers: [layer] });
-  renderTotals();
+  renderHero();
+  renderLegend();
 }
 
 async function main() {
@@ -194,31 +247,40 @@ async function main() {
   state.scenarios = scenarios;
   state.rows = await loadScenario('baseline');
 
-  document.getElementById('city-name').textContent = `· ${meta.city.name}`;
-  document.getElementById('attribution').textContent = meta.attribution;
-  document.getElementById('notice').textContent = meta.notice;
+  $('city-name').textContent = `· ${meta.city.name}`;
+  $('attribution').textContent = meta.attribution;
+  $('notice').textContent = meta.notice;
 
-  const sel = document.getElementById('scenario');
-  for (const s of scenarios) sel.add(new Option(s.label, s.scenario_id));
-  sel.onchange = async e => {
+  for (const s of scenarios) $('scenario').add(new Option(s.label, s.scenario_id));
+  $('scenario').onchange = async e => {
     state.scenario = e.target.value;
     state.rows = await loadScenario(state.scenario);
     render();
   };
+  $('layer').onchange = e => { state.layer = e.target.value; render(); };
+  $('opacity').oninput = e => { state.opacity = Number(e.target.value); render(); };
+  $('toggle').onclick = () => setCollapsed(!$('panel').classList.contains('collapsed'));
 
-  document.getElementById('toggle').onclick = () =>
-    setCollapsed(!document.getElementById('panel').classList.contains('collapsed'));
+  for (const tab of document.querySelectorAll('[data-resource]')) {
+    tab.onclick = () => {
+      state.resource = tab.dataset.resource;
+      for (const t of document.querySelectorAll('[data-resource]')) t.setAttribute('aria-selected', String(t === tab));
+      $('zone-card').hidden = true;
+      $('hint').hidden = false;
+      render();
+    };
+  }
 
   const [lon0, lat0, lon1, lat1] = meta.city.bbox;
-  const panelH = document.getElementById('panel').offsetHeight;
+  const panelH = $('panel').offsetHeight;
   map = new maplibregl.Map({
     container: 'map',
     style: BASEMAPS.streets.style,
     bounds: [[lon0, lat0], [lon1, lat1]],
     fitBoundsOptions: {
       padding: isPhone()
-        ? { top: 12, left: 12, right: 12, bottom: panelH + 12 }
-        : { top: 20, bottom: 20, right: 20, left: 350 },
+        ? { top: 60, left: 12, right: 12, bottom: panelH + 12 }
+        : { top: 20, bottom: 20, right: 280, left: 360 },
     },
     dragRotate: false,
     pitchWithRotate: false,
@@ -227,8 +289,9 @@ async function main() {
   });
   map.touchZoomRotate.disableRotation();
   map.keyboard.disableRotation();
-  // Only fall back to a blank ground if the very first basemap never loads;
-  // later tile errors (e.g. mid basemap switch) must not wipe the chosen style.
+
+  // Only fall back to a blank ground if the first style itself fails to load;
+  // individual tile errors and later basemap switches must not trigger it.
   let firstLoad = false;
   map.once('load', () => { firstLoad = true; });
   map.on('error', e => {
@@ -243,22 +306,19 @@ async function main() {
       for (const b of document.querySelectorAll('[data-basemap]')) b.setAttribute('aria-pressed', String(b === btn));
       map.setStyle(BASEMAPS[name].style);
       state.opacity = BASEMAPS[name].opacity;
-      document.getElementById('opacity').value = state.opacity;
+      $('opacity').value = state.opacity;
       render();
     };
   }
+
   overlay = new deck.MapLibreOverlay({ layers: [] });
   map.addControl(overlay);
-
-  document.getElementById('resource').onchange = e => { state.resource = e.target.value; render(); };
-  document.getElementById('layer').onchange = e => { state.layer = e.target.value; render(); };
-  document.getElementById('opacity').oninput = e => { state.opacity = Number(e.target.value); render(); };
   renderClimate();
   render();
 }
 
 main().catch(err => {
-  document.getElementById('panel').append(Object.assign(document.createElement('p'), {
+  $('panel').append(el('p', {
     className: 'error',
     textContent: `Could not load data (${err.message}). Run \`python -m urms.cli prototype\` first.`,
   }));

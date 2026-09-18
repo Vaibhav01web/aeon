@@ -105,10 +105,17 @@ def _demand(zones: pd.DataFrame, cfg, shocks: dict) -> dict[str, np.ndarray]:
     return out
 
 
-def _gap_rows(zones: pd.DataFrame, demand: dict, caps: dict, cfg) -> pd.DataFrame:
-    """Per-zone rows for the map — urban zones only (city totals use every zone)."""
+def _gap_rows(zones: pd.DataFrame, demand: dict, caps: dict, cfg,
+              reference: dict[str, np.ndarray] | None = None) -> tuple[pd.DataFrame, dict[str, np.ndarray]]:
+    """Per-zone rows for the map — urban zones only (city totals use every zone).
+
+    Risk is ranked against `reference` (the baseline's sorted scores per
+    resource). Ranking each scenario against itself would leave the bands
+    unchanged under any city-wide shock, so a heatwave would look identical
+    to baseline. Returns the rows and this run's sorted scores.
+    """
     urban = (zones.population / zones.area_km2 >= cfg.zones.urban_min_density_per_km2).values
-    frames = []
+    frames, scores_out = [], {}
     for r in cfg.resources:
         cap, n_assets, n_tagged = caps[r]
         d50 = demand[r]
@@ -127,20 +134,24 @@ def _gap_rows(zones: pd.DataFrame, demand: dict, caps: dict, cfg) -> pd.DataFram
         # No OSM asset within service radius means missing map data, not a
         # confirmed shortage — keep those zones out of the risk ranking.
         mapped = f.n_assets > 0
-        nd = _minmax_norm(f.deficit_ratio[mapped]).reindex(f.index)
-        terms = pd.DataFrame({"capacity deficit": 0.55 * nd, "low redundancy": 0.20 * (1 - f.redundancy)})
+        # deficit_ratio is already bounded to [-1, 1], so the score is absolute
+        # and comparable across scenarios (no per-run min-max rescaling).
+        terms = pd.DataFrame({"capacity deficit": 0.55 * (f.deficit_ratio + 1) / 2,
+                              "low redundancy": 0.20 * (1 - f.redundancy)})
         score = terms.sum(axis=1)
-        # Bands are a within-city ranking (top 10% critical, next 20% high,
-        # next 30% medium): the map answers "which zones first", not an
-        # absolute shortage verdict, since capacities are largely assumed.
-        pct = score[mapped].rank(pct=True, method="average").reindex(f.index)
-        f["risk_score"] = (100 * pct).round(0)
+        ref = np.sort(score[mapped].values) if reference is None else reference[r]
+        scores_out[r] = ref
+        # Bands rank zones against the baseline city (top 10% critical, next
+        # 20% high, next 30% medium): "which zones first", not an absolute
+        # shortage verdict, since capacities are largely assumed.
+        pct = pd.Series(np.searchsorted(ref, score.values, side="right") / max(len(ref), 1), index=f.index)
+        f["risk_score"] = (100 * pct).clip(0, 100).round(0).where(mapped)
         f["risk_band"] = np.select(
-            [~mapped, pct >= 0.9, pct >= 0.7, pct >= 0.4],
+            [~mapped, pct > 0.9, pct > 0.7, pct > 0.4],
             ["no mapped capacity", "critical", "high", "medium"], default="low")
         f["top_driver"] = np.where(mapped, terms.idxmax(axis=1), "no OSM asset within service radius")
         frames.append(f)
-    return pd.concat(frames, ignore_index=True)
+    return pd.concat(frames, ignore_index=True), scores_out
 
 
 def _columnar(df: pd.DataFrame) -> dict:
@@ -169,13 +180,14 @@ def run_prototype(cfg) -> Path:
     build = Path(cfg.paths.build)
     (build / "scenario_gap").mkdir(parents=True, exist_ok=True)
     summaries, totals = [], {}
+    _, reference = _gap_rows(zones, _demand(zones, cfg, {}), base_caps, cfg)
     for s in cfg.scenarios:
         shocks = s.get("shocks", {})
         caps = base_caps
         if shocks.get("disable_top_n_assets"):
             caps = {r: _capacity(zones_proj, assets, r, cfg, shocks["disable_top_n_assets"]) for r in cfg.resources}
         demand = _demand(zones, cfg, shocks)
-        g = _gap_rows(zones, demand, caps, cfg)
+        g, _ = _gap_rows(zones, demand, caps, cfg, reference)
         cols = ["zone_id", "resource", "population", "demand_p10", "demand_p50", "demand_p90", "capacity",
                 "capacity_provenance", "gap_p90", "risk_score", "risk_band", "top_driver"]
         (build / "scenario_gap" / f"{s['id']}.json").write_text(json.dumps(_columnar(g[cols]), separators=(",", ":")))

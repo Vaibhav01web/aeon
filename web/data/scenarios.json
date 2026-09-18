@@ -4,8 +4,8 @@
   "label": "Baseline",
   "risk_by_band": {
    "water": {
-    "low": 409,
-    "medium": 308,
+    "low": 410,
+    "medium": 307,
     "no mapped capacity": 235,
     "high": 205,
     "critical": 103
@@ -19,9 +19,8 @@
    },
    "waste": {
     "no mapped capacity": 1228,
-    "low": 18,
+    "medium": 22,
     "high": 6,
-    "medium": 4,
     "critical": 4
    }
   },
@@ -36,25 +35,24 @@
   "label": "+10% population",
   "risk_by_band": {
    "water": {
-    "low": 409,
+    "low": 389,
     "medium": 308,
     "no mapped capacity": 235,
-    "high": 205,
-    "critical": 103
+    "high": 223,
+    "critical": 105
    },
    "electricity": {
     "no mapped capacity": 795,
     "low": 173,
-    "medium": 152,
-    "high": 93,
-    "critical": 47
+    "medium": 137,
+    "high": 107,
+    "critical": 48
    },
    "waste": {
     "no mapped capacity": 1228,
-    "low": 18,
-    "high": 6,
-    "medium": 4,
-    "critical": 4
+    "medium": 22,
+    "critical": 5,
+    "high": 5
    }
   },
   "total_demand_p50_by_resource": {
@@ -68,25 +66,24 @@
   "label": "2035 projected population",
   "risk_by_band": {
    "water": {
-    "low": 409,
-    "medium": 308,
+    "low": 359,
+    "medium": 304,
+    "high": 252,
     "no mapped capacity": 235,
-    "high": 205,
-    "critical": 103
+    "critical": 110
    },
    "electricity": {
     "no mapped capacity": 795,
-    "low": 169,
-    "medium": 156,
-    "high": 93,
-    "critical": 47
+    "low": 170,
+    "medium": 130,
+    "high": 112,
+    "critical": 53
    },
    "waste": {
     "no mapped capacity": 1228,
-    "low": 17,
+    "medium": 21,
     "high": 6,
-    "medium": 5,
-    "critical": 4
+    "critical": 5
    }
   },
   "total_demand_p50_by_resource": {
@@ -100,24 +97,23 @@
   "label": "Heatwave (+6 degC)",
   "risk_by_band": {
    "water": {
-    "low": 409,
+    "low": 388,
     "medium": 308,
     "no mapped capacity": 235,
-    "high": 205,
-    "critical": 103
+    "high": 223,
+    "critical": 106
    },
    "electricity": {
     "no mapped capacity": 795,
-    "low": 168,
-    "medium": 157,
-    "high": 93,
-    "critical": 47
+    "low": 169,
+    "medium": 131,
+    "high": 112,
+    "critical": 53
    },
    "waste": {
     "no mapped capacity": 1228,
-    "low": 18,
+    "medium": 22,
     "high": 6,
-    "medium": 4,
     "critical": 4
    }
   },
@@ -132,24 +128,23 @@
   "label": "Festival day (+25% commercial)",
   "risk_by_band": {
    "water": {
-    "low": 409,
-    "medium": 308,
+    "low": 410,
+    "medium": 306,
     "no mapped capacity": 235,
-    "high": 205,
+    "high": 206,
     "critical": 103
    },
    "electricity": {
     "no mapped capacity": 795,
     "low": 179,
-    "medium": 146,
-    "high": 93,
+    "medium": 145,
+    "high": 94,
     "critical": 47
    },
    "waste": {
     "no mapped capacity": 1228,
-    "low": 18,
+    "medium": 22,
     "high": 6,
-    "medium": 4,
     "critical": 4
    }
   },
@@ -164,25 +159,24 @@
   "label": "Largest asset offline",
   "risk_by_band": {
    "water": {
-    "low": 409,
-    "medium": 308,
+    "low": 394,
+    "medium": 313,
     "no mapped capacity": 235,
-    "high": 205,
+    "high": 215,
     "critical": 103
    },
    "electricity": {
     "no mapped capacity": 808,
     "low": 179,
-    "medium": 137,
-    "high": 90,
-    "critical": 46
+    "medium": 132,
+    "high": 94,
+    "critical": 47
    },
    "waste": {
     "no mapped capacity": 1238,
-    "low": 10,
-    "medium": 5,
+    "medium": 14,
     "high": 4,
-    "critical": 3
+    "critical": 4
    }
   },
   "total_demand_p50_by_resource": {
@@ -196,11 +190,11 @@
   "label": "NRW cut 35% \u2192 20%",
   "risk_by_band": {
    "water": {
-    "low": 409,
-    "medium": 308,
+    "low": 467,
+    "medium": 293,
     "no mapped capacity": 235,
-    "high": 205,
-    "critical": 103
+    "high": 169,
+    "critical": 96
    },
    "electricity": {
     "no mapped capacity": 795,
@@ -211,9 +205,8 @@
    },
    "waste": {
     "no mapped capacity": 1228,
-    "low": 18,
+    "medium": 22,
     "high": 6,
-    "medium": 4,
     "critical": 4
    }
   },
@@ -228,8 +221,8 @@
   "label": "80% wet waste composted",
   "risk_by_band": {
    "water": {
-    "low": 409,
-    "medium": 308,
+    "low": 410,
+    "medium": 307,
     "no mapped capacity": 235,
     "high": 205,
     "critical": 103
@@ -243,9 +236,8 @@
    },
    "waste": {
     "no mapped capacity": 1228,
-    "low": 18,
+    "medium": 22,
     "high": 6,
-    "medium": 4,
     "critical": 4
    }
   },
