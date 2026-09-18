@@ -51,5 +51,5 @@
   "IPCC 2006 GL Vol.5 default DOC/MCF for managed anaerobic landfill"
  ],
  "attribution": "Building footprints \u00a9 Google (Open Buildings v3), \u00a9 Microsoft (GlobalMLBuildingFootprints), \u00a9 OpenStreetMap contributors \u2014 merged by VIDA, ODbL 1.0 \u00b7 Contains modified Copernicus Sentinel data (2026) \u00b7 GHSL \u00a9 European Union 1995-2026, CC BY 4.0; WorldPop, CC BY 4.0 \u00b7 Map data \u00a9 OpenStreetMap contributors, ODbL \u00b7 Basemap \u00a9 OpenFreeMap, \u00a9 OpenMapTiles \u00b7 Weather \u00a9 Open-Meteo, CC BY 4.0 \u00b7 Routing \u00a9 Project-OSRM, BSD-2",
- "notice": "Prototype: population distributed by building footprints (VIDA) x residential share; P10-P90 is an assumed \u00b115% band; capacity from OSM tags where present, otherwise config defaults (marked ASSUMED)."
+ "notice": "Prototype: population distributed by building footprints (VIDA) x residential share. Map shows urban zones (\u2265 400 people/km\u00b2, Census of India urban criterion); city totals include every zone. Risk bands rank zones within the city \u2014 top 10% critical, next 20% high, next 30% medium. P10-P90 is an assumed \u00b115% band; capacity from OSM tags where present, otherwise config defaults (ASSUMED)."
 }

@@ -28,6 +28,7 @@ zones:
   use_wards: true                 # OSM admin_level=10
   min_footprints_per_zone: 5      # below this, zone is flagged low-confidence
   min_building_area_m2: 12        # drop sheds / low-confidence detections below this footprint
+  urban_min_density_per_km2: 400  # map shows zones at or above this; Census of India urban density criterion
 
 sentinel:
   date_start: "2026-01-01"

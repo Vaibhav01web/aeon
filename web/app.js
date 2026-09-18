@@ -4,7 +4,7 @@ const RISK_COLORS = {
   medium: [252, 141, 89],
   high: [215, 48, 31],
   critical: [127, 0, 0],
-  'no mapped capacity': [184, 184, 184],
+  'no mapped capacity': [150, 150, 150, 90],
 };
 
 const BLANK_STYLE = {
@@ -34,7 +34,7 @@ const BASEMAPS = {
   },
 };
 
-const state = { resource: 'water', layer: 'risk', scenario: 'baseline', basemap: 'streets', rows: [], meta: null, scenarios: [] };
+const state = { resource: 'water', layer: 'risk', scenario: 'baseline', basemap: 'streets', opacity: 0.72, rows: [], meta: null, scenarios: [] };
 let map;
 const cache = {};
 let overlay;
@@ -120,7 +120,8 @@ function showZone(d) {
   add('Demand P50', fmt(d.demand_p50, r), 'DERIVED');
   add('P10 – P90', `${fmt(d.demand_p10, r)} – ${fmt(d.demand_p90, r)}`, 'ASSUMED');
   add('Capacity', fmt(d.capacity, r), d.capacity_provenance === 'osm_tagged' ? 'MEASURED' : 'ASSUMED');
-  add('Risk', d.risk_score === null ? d.risk_band : `${d.risk_score.toFixed(0)} / 100 (${d.risk_band})`);
+  add('Risk', d.risk_score === null ? d.risk_band
+    : `${d.risk_band} — riskier than ${d.risk_score.toFixed(0)}% of mapped zones`);
   add('Why', d.top_driver);
   card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
@@ -172,9 +173,14 @@ function render() {
     getFillColor: d => colorFor(d, maxVal),
     getElevation: d => d.demand_p50,
     extruded: false,
-    stroked: false,
+    stroked: true,
+    getLineColor: [255, 255, 255, 110],
+    lineWidthUnits: 'pixels',
+    getLineWidth: 0.6,
     pickable: true,
-    opacity: BASEMAPS[state.basemap].opacity,
+    autoHighlight: true,
+    highlightColor: [255, 255, 255, 90],
+    opacity: state.opacity,
     onClick: ({ object }) => object && showZone(object),
     updateTriggers: { getFillColor: [state.layer, state.resource, state.scenario] },
   });
@@ -236,6 +242,8 @@ async function main() {
       state.basemap = name;
       for (const b of document.querySelectorAll('[data-basemap]')) b.setAttribute('aria-pressed', String(b === btn));
       map.setStyle(BASEMAPS[name].style);
+      state.opacity = BASEMAPS[name].opacity;
+      document.getElementById('opacity').value = state.opacity;
       render();
     };
   }
@@ -244,6 +252,7 @@ async function main() {
 
   document.getElementById('resource').onchange = e => { state.resource = e.target.value; render(); };
   document.getElementById('layer').onchange = e => { state.layer = e.target.value; render(); };
+  document.getElementById('opacity').oninput = e => { state.opacity = Number(e.target.value); render(); };
   renderClimate();
   render();
 }

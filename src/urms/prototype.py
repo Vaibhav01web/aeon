@@ -20,7 +20,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 
-from urms.capacity.gap import _minmax_norm, _risk_band
+from urms.capacity.gap import _minmax_norm
 from urms.capacity.infra import _default_capacity
 from urms.serve.export import ATTRIBUTION
 from urms.zones.features import _add_osm_features
@@ -106,6 +106,8 @@ def _demand(zones: pd.DataFrame, cfg, shocks: dict) -> dict[str, np.ndarray]:
 
 
 def _gap_rows(zones: pd.DataFrame, demand: dict, caps: dict, cfg) -> pd.DataFrame:
+    """Per-zone rows for the map — urban zones only (city totals use every zone)."""
+    urban = (zones.population / zones.area_km2 >= cfg.zones.urban_min_density_per_km2).values
     frames = []
     for r in cfg.resources:
         cap, n_assets, n_tagged = caps[r]
@@ -121,16 +123,23 @@ def _gap_rows(zones: pd.DataFrame, demand: dict, caps: dict, cfg) -> pd.DataFram
         })
         f["gap_p90"] = f.demand_p90 - f.capacity
         f["deficit_ratio"] = (f.gap_p90 / f.demand_p90.clip(lower=1e-6)).clip(-1, 1)
+        f = f[urban].reset_index(drop=True)
         # No OSM asset within service radius means missing map data, not a
         # confirmed shortage — keep those zones out of the risk ranking.
         mapped = f.n_assets > 0
         nd = _minmax_norm(f.deficit_ratio[mapped]).reindex(f.index)
         terms = pd.DataFrame({"capacity deficit": 0.55 * nd, "low redundancy": 0.20 * (1 - f.redundancy)})
-        score = (100 * (terms.sum(axis=1) / 0.75)).clip(0, 100)
-        f["risk_score"] = score.where(mapped)
-        f["risk_band"] = np.where(mapped, score.apply(_risk_band), "no mapped capacity")
+        score = terms.sum(axis=1)
+        # Bands are a within-city ranking (top 10% critical, next 20% high,
+        # next 30% medium): the map answers "which zones first", not an
+        # absolute shortage verdict, since capacities are largely assumed.
+        pct = score[mapped].rank(pct=True, method="average").reindex(f.index)
+        f["risk_score"] = (100 * pct).round(0)
+        f["risk_band"] = np.select(
+            [~mapped, pct >= 0.9, pct >= 0.7, pct >= 0.4],
+            ["no mapped capacity", "critical", "high", "medium"], default="low")
         f["top_driver"] = np.where(mapped, terms.idxmax(axis=1), "no OSM asset within service radius")
-        frames.append(f[f.population > 0])
+        frames.append(f)
     return pd.concat(frames, ignore_index=True)
 
 
@@ -199,8 +208,11 @@ def run_prototype(cfg) -> Path:
         "climate_tco2e_per_year": climate,
         "climate_sources": [wc["ef_source"], kc["climate"]["source"]],
         "attribution": ATTRIBUTION,
-        "notice": f"Prototype: population distributed by {pop_method}; P10-P90 is an assumed ±{int(BAND*100)}% band; "
-                  "capacity from OSM tags where present, otherwise config defaults (marked ASSUMED).",
+        "notice": f"Prototype: population distributed by {pop_method}. Map shows urban zones "
+                  f"(≥ {cfg.zones.urban_min_density_per_km2:.0f} people/km², Census of India urban criterion); "
+                  "city totals include every zone. Risk bands rank zones within the city — top 10% critical, "
+                  "next 20% high, next 30% medium. P10-P90 is an assumed "
+                  f"±{int(BAND*100)}% band; capacity from OSM tags where present, otherwise config defaults (ASSUMED).",
     }
     (build / "meta.json").write_text(json.dumps(meta, indent=1, default=str))
     (build / "scenarios.json").write_text(json.dumps(summaries, indent=1))

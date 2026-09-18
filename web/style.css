@@ -53,6 +53,9 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); f
 .seg button:first-child { border-left: 0; }
 .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; font-weight: 600; }
 
+.opacity-row input { display: block; width: 100%; margin-top: 4px; accent-color: var(--accent); }
+.legend-note { margin-top: 0; }
+
 #totals { margin-top: 10px; }
 #totals p { margin: 2px 0; }
 #totals .bands { font-size: 11px; color: var(--muted); }

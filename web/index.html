@@ -35,7 +35,7 @@
         </label>
         <label>Layer
           <select id="layer">
-            <option value="risk">Shortage risk</option>
+            <option value="risk">Risk (city rank)</option>
             <option value="demand">Demand (P50)</option>
             <option value="capacity">Capacity</option>
             <option value="gap">Gap (P90 − capacity)</option>
@@ -53,6 +53,9 @@
             <button type="button" data-basemap="sentinel2" aria-pressed="false">Sentinel-2</button>
           </div>
         </div>
+        <label class="wide opacity-row">Hexagon opacity
+          <input id="opacity" type="range" min="0.15" max="1" step="0.05" value="0.72">
+        </label>
       </div>
 
       <div id="totals"></div>
@@ -62,8 +65,9 @@
         <span><i style="background:#fc8d59"></i>medium</span>
         <span><i style="background:#d7301f"></i>high</span>
         <span><i style="background:#7f0000"></i>critical</span>
-        <span><i style="background:#b8b8b8"></i>no mapped capacity</span>
+        <span><i style="background:rgba(150,150,150,0.45)"></i>no mapped capacity</span>
       </div>
+      <p class="hint legend-note">Risk = rank within the city: top 10% critical, next 20% high, next 30% medium.</p>
 
       <section id="zone-card" hidden></section>
       <p class="hint" id="hint">Tap a hexagon for details.</p>

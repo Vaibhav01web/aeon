@@ -49,6 +49,7 @@ class ZonesCfg(BaseModel):
     use_wards: bool
     min_footprints_per_zone: int
     min_building_area_m2: float = 0.0
+    urban_min_density_per_km2: float = 0.0
 
 
 class SentinelCfg(BaseModel):
