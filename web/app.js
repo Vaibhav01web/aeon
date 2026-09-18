@@ -12,7 +12,30 @@ const BLANK_STYLE = {
   layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#eeeee8' } }],
 };
 
-const state = { resource: 'water', layer: 'risk', scenario: 'baseline', rows: [], meta: null, scenarios: [] };
+const rasterStyle = (tiles, attribution, maxzoom) => ({
+  version: 8,
+  sources: { imagery: { type: 'raster', tiles: [tiles], tileSize: 256, maxzoom, attribution } },
+  layers: [{ id: 'imagery', type: 'raster', source: 'imagery' }],
+});
+
+const BASEMAPS = {
+  streets: { style: 'https://tiles.openfreemap.org/styles/liberty', opacity: 0.72 },
+  satellite: {
+    style: rasterStyle(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      'Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community', 19),
+    opacity: 0.55,
+  },
+  sentinel2: {
+    style: rasterStyle(
+      'https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/g/{z}/{y}/{x}.jpg',
+      'Sentinel-2 cloudless 2024 by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2024), CC BY-NC-SA 4.0', 15),
+    opacity: 0.55,
+  },
+};
+
+const state = { resource: 'water', layer: 'risk', scenario: 'baseline', basemap: 'streets', rows: [], meta: null, scenarios: [] };
+let map;
 const cache = {};
 let overlay;
 
@@ -151,7 +174,7 @@ function render() {
     extruded: false,
     stroked: false,
     pickable: true,
-    opacity: 0.72,
+    opacity: BASEMAPS[state.basemap].opacity,
     onClick: ({ object }) => object && showZone(object),
     updateTriggers: { getFillColor: [state.layer, state.resource, state.scenario] },
   });
@@ -182,9 +205,9 @@ async function main() {
 
   const [lon0, lat0, lon1, lat1] = meta.city.bbox;
   const panelH = document.getElementById('panel').offsetHeight;
-  const map = new maplibregl.Map({
+  map = new maplibregl.Map({
     container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/liberty',
+    style: BASEMAPS.streets.style,
     bounds: [[lon0, lat0], [lon1, lat1]],
     fitBoundsOptions: {
       padding: isPhone()
@@ -198,10 +221,24 @@ async function main() {
   });
   map.touchZoomRotate.disableRotation();
   map.keyboard.disableRotation();
-  let fellBack = false;
-  map.on('error', () => {
-    if (!fellBack && !map.isStyleLoaded()) { fellBack = true; map.setStyle(BLANK_STYLE); }
+  // Only fall back to a blank ground if the very first basemap never loads;
+  // later tile errors (e.g. mid basemap switch) must not wipe the chosen style.
+  let firstLoad = false;
+  map.once('load', () => { firstLoad = true; });
+  map.on('error', e => {
+    if (!firstLoad && !e.sourceId && !e.tile) { firstLoad = true; map.setStyle(BLANK_STYLE); }
   });
+
+  for (const btn of document.querySelectorAll('[data-basemap]')) {
+    btn.onclick = () => {
+      const name = btn.dataset.basemap;
+      if (name === state.basemap) return;
+      state.basemap = name;
+      for (const b of document.querySelectorAll('[data-basemap]')) b.setAttribute('aria-pressed', String(b === btn));
+      map.setStyle(BASEMAPS[name].style);
+      render();
+    };
+  }
   overlay = new deck.MapLibreOverlay({ layers: [] });
   map.addControl(overlay);
 

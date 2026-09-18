@@ -44,6 +44,15 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); f
   color: var(--fg); background: var(--control-bg); border: 1px solid var(--border); border-radius: 6px;
 }
 
+.basemap-label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+.seg { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.seg button {
+  flex: 1; padding: 6px 4px; font-size: 13px; cursor: pointer;
+  color: var(--fg); background: var(--control-bg); border: 0; border-left: 1px solid var(--border);
+}
+.seg button:first-child { border-left: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; font-weight: 600; }
+
 #totals { margin-top: 10px; }
 #totals p { margin: 2px 0; }
 #totals .bands { font-size: 11px; color: var(--muted); }

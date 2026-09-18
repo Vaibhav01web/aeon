@@ -45,6 +45,14 @@
         <label class="wide">Scenario
           <select id="scenario"></select>
         </label>
+        <div class="wide basemap" role="group" aria-label="Basemap">
+          <span class="basemap-label">Basemap</span>
+          <div class="seg">
+            <button type="button" data-basemap="streets" aria-pressed="true">Map</button>
+            <button type="button" data-basemap="satellite" aria-pressed="false">Satellite</button>
+            <button type="button" data-basemap="sentinel2" aria-pressed="false">Sentinel-2</button>
+          </div>
+        </div>
       </div>
 
       <div id="totals"></div>
