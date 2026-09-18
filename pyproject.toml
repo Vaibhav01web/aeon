@@ -1,7 +1,7 @@
 [project]
 name = "urms"
 version = "0.1.0"
-description = "Aeon: AI-powered Urban Resource Management System for Indian cities"
+description = "Pravah: AI-powered urban resource flow planner for Indian cities (water, electricity, waste)"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 dependencies = [

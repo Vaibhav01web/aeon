@@ -14,7 +14,7 @@ from fastapi import FastAPI, HTTPException
 from urms.conf import load_config
 from urms.decide.scenario import run_scenario
 
-app = FastAPI(title="Aeon URMS")
+app = FastAPI(title="Pravah")
 cfg = load_config()
 
 

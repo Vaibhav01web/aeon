@@ -14,7 +14,7 @@ import typer
 
 from urms.conf import load_config
 
-app = typer.Typer(no_args_is_help=True, help="Aeon URMS pipeline")
+app = typer.Typer(no_args_is_help=True, help="Pravah urban resource flow pipeline")
 acquire = typer.Typer(no_args_is_help=True, help="L0 — fetch open data")
 zones = typer.Typer(no_args_is_help=True, help="L1 — H3/ward zoning and features")
 calibrate = typer.Typer(no_args_is_help=True, help="L2 — floorspace -> population -> base demand")
