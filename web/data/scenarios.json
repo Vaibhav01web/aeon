@@ -4,30 +4,30 @@
   "label": "Baseline",
   "risk_by_band": {
    "water": {
-    "low": 397,
-    "medium": 298,
-    "no mapped capacity": 267,
-    "high": 198,
-    "critical": 100
+    "no mapped capacity": 1070,
+    "low": 514,
+    "medium": 386,
+    "high": 257,
+    "critical": 129
    },
    "electricity": {
-    "no mapped capacity": 795,
-    "low": 180,
-    "medium": 145,
-    "high": 93,
-    "critical": 47
+    "no mapped capacity": 1665,
+    "low": 247,
+    "medium": 236,
+    "high": 138,
+    "critical": 70
    },
    "waste": {
-    "no mapped capacity": 1228,
+    "no mapped capacity": 2324,
     "medium": 22,
     "high": 6,
     "critical": 4
    }
   },
   "total_demand_p50_by_resource": {
-   "water": 911712473.7928337,
-   "electricity": 913393.6506033959,
-   "waste": 1109517.5352609572
+   "water": 1442295847.0016174,
+   "electricity": 1418461.378509574,
+   "waste": 1723033.4057031497
   }
  },
  {
@@ -35,30 +35,30 @@
   "label": "+10% population",
   "risk_by_band": {
    "water": {
-    "low": 372,
-    "medium": 293,
-    "no mapped capacity": 267,
-    "high": 221,
-    "critical": 107
+    "no mapped capacity": 1070,
+    "low": 485,
+    "medium": 388,
+    "high": 279,
+    "critical": 134
    },
    "electricity": {
-    "no mapped capacity": 795,
-    "low": 173,
-    "medium": 137,
-    "high": 107,
-    "critical": 48
+    "no mapped capacity": 1665,
+    "low": 241,
+    "medium": 220,
+    "high": 153,
+    "critical": 77
    },
    "waste": {
-    "no mapped capacity": 1228,
+    "no mapped capacity": 2324,
     "medium": 22,
-    "critical": 5,
-    "high": 5
+    "high": 5,
+    "critical": 5
    }
   },
   "total_demand_p50_by_resource": {
-   "water": 1002883721.1721171,
-   "electricity": 1004733.0156637356,
-   "waste": 1220469.288787053
+   "water": 1586525431.701779,
+   "electricity": 1560307.5163605318,
+   "waste": 1895336.746273465
   }
  },
  {
@@ -66,30 +66,30 @@
   "label": "2035 projected population",
   "risk_by_band": {
    "water": {
-    "low": 344,
-    "medium": 297,
-    "no mapped capacity": 267,
-    "high": 243,
-    "critical": 109
+    "no mapped capacity": 1070,
+    "low": 451,
+    "medium": 387,
+    "high": 309,
+    "critical": 139
    },
    "electricity": {
-    "no mapped capacity": 795,
-    "low": 170,
-    "medium": 130,
-    "high": 112,
-    "critical": 53
+    "no mapped capacity": 1665,
+    "low": 229,
+    "medium": 216,
+    "high": 161,
+    "critical": 85
    },
    "waste": {
-    "no mapped capacity": 1228,
+    "no mapped capacity": 2324,
     "medium": 21,
     "high": 6,
     "critical": 5
    }
   },
   "total_demand_p50_by_resource": {
-   "water": 1130523467.5031137,
-   "electricity": 1132608.1267482108,
-   "waste": 1375801.7437235867
+   "water": 1788446850.2820053,
+   "electricity": 1758892.109351872,
+   "waste": 2136561.423071906
   }
  },
  {
@@ -97,30 +97,30 @@
   "label": "Heatwave (+6 degC)",
   "risk_by_band": {
    "water": {
-    "low": 371,
-    "medium": 292,
-    "no mapped capacity": 267,
-    "high": 223,
-    "critical": 107
+    "no mapped capacity": 1070,
+    "low": 483,
+    "medium": 388,
+    "high": 281,
+    "critical": 134
    },
    "electricity": {
-    "no mapped capacity": 795,
-    "low": 169,
-    "medium": 131,
-    "high": 112,
-    "critical": 53
+    "no mapped capacity": 1665,
+    "low": 229,
+    "medium": 215,
+    "high": 161,
+    "critical": 86
    },
    "waste": {
-    "no mapped capacity": 1228,
+    "no mapped capacity": 2324,
     "medium": 22,
     "high": 6,
     "critical": 4
    }
   },
   "total_demand_p50_by_resource": {
-   "water": 1010177420.9624597,
-   "electricity": 1143568.8505554516,
-   "waste": 1109517.5352609572
+   "water": 1598063798.477792,
+   "electricity": 1775913.6458939868,
+   "waste": 1723033.4057031497
   }
  },
  {
@@ -128,30 +128,30 @@
   "label": "Festival day (+25% commercial)",
   "risk_by_band": {
    "water": {
-    "low": 396,
-    "medium": 298,
-    "no mapped capacity": 267,
-    "high": 199,
-    "critical": 100
+    "no mapped capacity": 1070,
+    "low": 514,
+    "medium": 385,
+    "high": 258,
+    "critical": 129
    },
    "electricity": {
-    "no mapped capacity": 795,
-    "low": 179,
-    "medium": 145,
-    "high": 94,
-    "critical": 47
+    "no mapped capacity": 1665,
+    "low": 246,
+    "medium": 236,
+    "high": 139,
+    "critical": 70
    },
    "waste": {
-    "no mapped capacity": 1228,
+    "no mapped capacity": 2324,
     "medium": 22,
     "high": 6,
     "critical": 4
    }
   },
   "total_demand_p50_by_resource": {
-   "water": 915514568.436688,
-   "electricity": 916878.8379461864,
-   "waste": 1113751.0620299915
+   "water": 1447119903.5023108,
+   "electricity": 1422879.7348626358,
+   "waste": 1728400.471532341
   }
  },
  {
@@ -159,30 +159,30 @@
   "label": "Largest asset offline",
   "risk_by_band": {
    "water": {
-    "low": 381,
-    "medium": 303,
-    "no mapped capacity": 267,
-    "high": 209,
-    "critical": 100
+    "no mapped capacity": 1070,
+    "low": 508,
+    "medium": 391,
+    "high": 258,
+    "critical": 129
    },
    "electricity": {
-    "no mapped capacity": 808,
-    "low": 179,
-    "medium": 132,
-    "high": 94,
-    "critical": 47
+    "no mapped capacity": 1672,
+    "low": 241,
+    "medium": 235,
+    "high": 138,
+    "critical": 70
    },
    "waste": {
-    "no mapped capacity": 1238,
+    "no mapped capacity": 2334,
     "medium": 14,
     "high": 4,
     "critical": 4
    }
   },
   "total_demand_p50_by_resource": {
-   "water": 911712473.7928337,
-   "electricity": 913393.6506033959,
-   "waste": 1109517.5352609572
+   "water": 1442295847.0016174,
+   "electricity": 1418461.378509574,
+   "waste": 1723033.4057031497
   }
  },
  {
@@ -190,30 +190,30 @@
   "label": "NRW cut 35% \u2192 20%",
   "risk_by_band": {
    "water": {
-    "low": 450,
-    "medium": 290,
-    "no mapped capacity": 267,
-    "high": 159,
-    "critical": 94
+    "no mapped capacity": 1070,
+    "low": 587,
+    "medium": 357,
+    "high": 221,
+    "critical": 121
    },
    "electricity": {
-    "no mapped capacity": 795,
-    "low": 180,
-    "medium": 145,
-    "high": 93,
-    "critical": 47
+    "no mapped capacity": 1665,
+    "low": 247,
+    "medium": 236,
+    "high": 138,
+    "critical": 70
    },
    "waste": {
-    "no mapped capacity": 1228,
+    "no mapped capacity": 2324,
     "medium": 22,
     "high": 6,
     "critical": 4
    }
   },
   "total_demand_p50_by_resource": {
-   "water": 740766384.9566773,
-   "electricity": 913393.6506033959,
-   "waste": 1109517.5352609572
+   "water": 1171865375.6888142,
+   "electricity": 1418461.378509574,
+   "waste": 1723033.4057031497
   }
  },
  {
@@ -221,30 +221,30 @@
   "label": "80% wet waste composted",
   "risk_by_band": {
    "water": {
-    "low": 397,
-    "medium": 298,
-    "no mapped capacity": 267,
-    "high": 198,
-    "critical": 100
+    "no mapped capacity": 1070,
+    "low": 514,
+    "medium": 386,
+    "high": 257,
+    "critical": 129
    },
    "electricity": {
-    "no mapped capacity": 795,
-    "low": 180,
-    "medium": 145,
-    "high": 93,
-    "critical": 47
+    "no mapped capacity": 1665,
+    "low": 247,
+    "medium": 236,
+    "high": 138,
+    "critical": 70
    },
    "waste": {
-    "no mapped capacity": 1228,
+    "no mapped capacity": 2324,
     "medium": 22,
     "high": 6,
     "critical": 4
    }
   },
   "total_demand_p50_by_resource": {
-   "water": 911712473.7928337,
-   "electricity": 913393.6506033959,
-   "waste": 1109517.5352609572
+   "water": 1442295847.0016174,
+   "electricity": 1418461.378509574,
+   "waste": 1723033.4057031497
   }
  }
 ]

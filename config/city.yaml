@@ -10,16 +10,16 @@ city:
   slug: "pune"
   state: "Maharashtra"
   state_code: "MH"
-  ulb_name: "Pune Municipal Corporation"
+  ulb_name: "Pune Municipal Corporation + Pimpri-Chinchwad Municipal Corporation"
   lgd_code: null                  # optional, from D20 (data.gov.in LGD)
   # lon_min, lat_min, lon_max, lat_max  (WGS84)
-  bbox: [73.70, 18.40, 74.05, 18.68]
+  bbox: [73.60, 18.38, 74.12, 18.80]   # whole Pune metro: PMC + PCMC + Hinjewadi, Talegaon, Chakan, Wagholi fringe
   utm_crs: "EPSG:32643"           # 43N. Use 32642 west of 72E, 32644 east of 78E
   timezone: "Asia/Kolkata"
-  population_total: 3124458       # Census 2011 ULB total — the IPF anchor
+  population_total: 4852150       # Census 2011: PMC 3,124,458 + PCMC 1,727,692 — the IPF anchor; fringe villages outside both ULBs are not in it
   population_year: 2011
   population_growth_rate: 0.021   # CAGR; source it or mark ASSUMED
-  area_km2: 331.26
+  area_km2: 512.26                # 2011 municipal areas: PMC 331.26 + PCMC 181
   ward_population_csv: null       # optional: ward_id,population from Census 2011 / SHRUG
 
 zones:

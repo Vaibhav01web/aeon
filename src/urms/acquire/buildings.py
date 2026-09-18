@@ -23,6 +23,10 @@ VIDA = (
 )
 
 
+M_PER_DEG_LAT = 110_574.0      # WGS84, near-constant with latitude
+M_PER_DEG_LON_EQ = 111_320.0   # at the equator; scaled by cos(latitude)
+
+
 def fetch_buildings(cfg: Config, iso: str = "IND") -> Path:
     lon0, lat0, lon1, lat1 = cfg.city.bbox
     con = connect()
@@ -33,20 +37,24 @@ def fetch_buildings(cfg: Config, iso: str = "IND") -> Path:
     # ~200 shard footers are fetched concurrently; one transient DNS/HTTP
     # failure otherwise aborts the whole query.
     con.execute("SET http_retries=10; SET http_retry_wait_ms=1000; SET http_retry_backoff=2; SET threads=4;")
+    # The bbox-struct filter is row-level containment as well as row-group
+    # pruning, so no ST_Intersects refine is needed. Centroid comes from the
+    # bbox struct, and area from degrees² scaled by local metres-per-degree
+    # (<0.1% error at footprint scale): per-row PROJ transforms made a metro
+    # fetch take 20+ minutes.
     con.execute(
         f"""
       CREATE OR REPLACE TABLE buildings AS
-      SELECT row_number() OVER () - 1              AS building_id,
+      SELECT row_number() OVER () - 1                    AS building_id,
              geometry,
              bf_source,
-             ST_X(ST_Centroid(geometry))           AS centroid_lon,
-             ST_Y(ST_Centroid(geometry))           AS centroid_lat,
-             ST_Area(ST_Transform(geometry,'EPSG:4326','{cfg.city.utm_crs}')) AS area_m2
+             (bbox.xmin + bbox.xmax) / 2                 AS centroid_lon,
+             (bbox.ymin + bbox.ymax) / 2                 AS centroid_lat,
+             ST_Area(geometry) * {M_PER_DEG_LAT} * {M_PER_DEG_LON_EQ}
+               * cos(radians((bbox.ymin + bbox.ymax) / 2)) AS area_m2
       FROM read_parquet('{VIDA.format(iso=iso)}', hive_partitioning=true)
-      WHERE bbox.xmin > {lon0} AND bbox.xmax < {lon1}      -- row-group pruning FIRST
+      WHERE bbox.xmin > {lon0} AND bbox.xmax < {lon1}
         AND bbox.ymin > {lat0} AND bbox.ymax < {lat1}
-        AND ST_Intersects(geometry,
-              ST_MakeEnvelope({lon0},{lat0},{lon1},{lat1}))  -- exact refine
     """
     )
     n = con.execute("SELECT count(*) FROM buildings").fetchone()[0]

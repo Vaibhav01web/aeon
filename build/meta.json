@@ -4,20 +4,20 @@
   "slug": "pune",
   "state": "Maharashtra",
   "state_code": "MH",
-  "ulb_name": "Pune Municipal Corporation",
+  "ulb_name": "Pune Municipal Corporation + Pimpri-Chinchwad Municipal Corporation",
   "lgd_code": null,
   "bbox": [
-   73.7,
-   18.4,
-   74.05,
-   18.68
+   73.6,
+   18.38,
+   74.12,
+   18.8
   ],
   "utm_crs": "EPSG:32643",
   "timezone": "Asia/Kolkata",
-  "population_total": 3124458.0,
+  "population_total": 4852150.0,
   "population_year": 2011,
   "population_growth_rate": 0.021,
-  "area_km2": 331.26,
+  "area_km2": 512.26,
   "ward_population_csv": null
  },
  "resources": [
@@ -41,10 +41,10 @@
   "waste": "kg/day"
  },
  "population_method": "building footprints (VIDA) x residential share",
- "population_target": 4267375.135619066,
+ "population_target": 6627051.560396731,
  "climate_tco2e_per_year": {
-  "Fix leaks (NRW 35%\u219220%)": 20103.772885398495,
-  "Compost 80% wet waste": 202162.9710648285
+  "Fix leaks (NRW 35%\u219220%)": 31803.4347177996,
+  "Compost 80% wet waste": 313950.47078635957
  },
  "climate_sources": [
   "CEA CO2 Baseline Database for the Indian Power Sector",
