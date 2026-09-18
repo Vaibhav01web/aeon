@@ -38,7 +38,7 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); f
 #totals p { margin: 4px 0; }
 #totals .bands { font-size: 11px; color: var(--muted); }
 
-.bar-row { display: grid; grid-template-columns: 1fr 90px 56px; align-items: center; gap: 6px; font-size: 12px; margin: 4px 0; }
+.bar-row { display: grid; grid-template-columns: 1fr 70px 64px; padding-right: 6px; align-items: center; gap: 6px; font-size: 12px; margin: 4px 0; }
 .bar { height: 10px; background: #2b8c7e; border-radius: 2px; }
 .bar-val { text-align: right; font-variant-numeric: tabular-nums; }
 

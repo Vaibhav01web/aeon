@@ -169,7 +169,9 @@ async function main() {
     container: 'map',
     style: 'https://tiles.openfreemap.org/styles/liberty',
     bounds: [[lon0, lat0], [lon1, lat1]],
-    fitBoundsOptions: { padding: 20 },
+    fitBoundsOptions: {
+      padding: window.innerWidth > 700 ? { top: 20, bottom: 40, right: 20, left: 340 } : 20,
+    },
   });
   let fellBack = false;
   map.on('error', () => {
